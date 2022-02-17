@@ -8,19 +8,19 @@ Changelog
 paperless-ng 1.6.0
 ##################
 
-Thanks to everyone on the paperless-ngx team for their excellent work in reviving the Paperless project! 
+Thanks to everyone on the paperless-ngx team for their excellent work in reviving the Paperless project!
 
 This release merges several pending PRs, including bug fixes and minor UI updates. Major changes include:
 
 * Updated translations.
 * Updated docs, containers, to paperless-ngx.
 * Updated Python and Angular dependencies.
-* `@shamoon`_ improved the PDF viewer on mobile (#2). 
+* `@shamoon`_ improved the PDF viewer on mobile (#2).
 * `@amenk`_ fixed the search box overlay menu on mobile (#32).
 * `@dblitt`_ updated the login form to not auto-capitalize usernames (#36).
-* `@evilsidekick293`_ made the worker timeout configurable (#37). See ``PAPERLESS_WORKER_TIMEOUT``. 
+* `@evilsidekick293`_ made the worker timeout configurable (#37). See ``PAPERLESS_WORKER_TIMEOUT``.
 
-Thank you to the following people for their documentation updates: 
+Thank you to the following people for their documentation updates:
 
 `@m0veax`_, `@fignew`_, `@muued`_, `@isigmund`_, `@denilsonsa`_, `@sAksham-Ar`_, `@philpagel`_, `@davemachado`_, `@2600box`_, `@qcasey`_, `@kpj`_.
 
