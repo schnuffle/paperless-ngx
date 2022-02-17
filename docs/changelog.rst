@@ -5,6 +5,25 @@
 Changelog
 *********
 
+paperless-ng 1.6.0
+##################
+
+Thanks to everyone on the paperless-ngx team for their excellent work in reviving the Paperless project! 
+
+This release merges several pending PRs, including bug fixes and minor UI updates. Major changes include:
+
+* Updated translations.
+* Updated docs, containers, to paperless-ngx.
+* Updated Python and Angular dependencies.
+* `@shamoon`_ improved the PDF viewer on mobile (#2). 
+* `@amenk`_ fixed the search box overlay menu on mobile (#32).
+* `@dblitt`_ updated the login form to not auto-capitalize usernames (#36).
+* `@evilsidekick293`_ made the worker timeout configurable (#37). See ``PAPERLESS_WORKER_TIMEOUT``. 
+
+Thank you to the following people for their documentation updates: 
+
+`@m0veax`_, `@fignew`_, `@muued`_, `@isigmund`_, `@denilsonsa`_, `@sAksham-Ar`_, `@philpagel`_, `@davemachado`_, `@2600box`_, `@qcasey`_, `@kpj`_.
+
 paperless-ng 1.5.0
 ##################
 
@@ -1483,6 +1502,21 @@ bulk of the work on this big change.
 .. _Brian Cribbs: https://github.com/cribbstechnolog
 .. _Brendan M. Sleight: https://github.com/bmsleight
 .. _Daniel Albers: https://github.com/AlD
+.. _@shamoon: https://github.com/shamoon
+.. _@amenk: https://github.com/amenk
+.. _@dblitt: https://github.com/dblitt
+.. _@evilsidekick293: https://github.com/evilsidekick293
+.. _@m0veax: https://github.com/m0veax
+.. _@fignew: https://github.com/fignew
+.. _@muued: https://github.com/muued
+.. _@isigmund: https://github.com/isigmund
+.. _@denilsonsa: https://github.com/denilsonsa
+.. _@sAksham-Ar: https://github.com/sAksham-Ar
+.. _@philpagel: https://github.com/philpagel
+.. _@davemachado: https://github.com/davemachado
+.. _@2600box: https://github.com/2600box
+.. _@qcasey: https://github.com/qcasey
+.. _@kpj: https://github.com/kpj
 
 .. _#20: https://github.com/the-paperless-project/paperless/issues/20
 .. _#44: https://github.com/the-paperless-project/paperless/issues/44
