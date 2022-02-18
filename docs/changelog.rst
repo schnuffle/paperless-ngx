@@ -19,10 +19,12 @@ This release merges several pending PRs, including bug fixes and minor UI update
 * `@amenk`_ fixed the search box overlay menu on mobile (#32).
 * `@dblitt`_ updated the login form to not auto-capitalize usernames (#36).
 * `@evilsidekick293`_ made the worker timeout configurable (#37). See ``PAPERLESS_WORKER_TIMEOUT``.
+* `@mweimerskirch`_ sorted the language dropdown by locale (#78).
+* `@mweimerskirch`_ enabled the Czech (#83) and Danish (#84) translations.
 
 Thank you to the following people for their documentation updates:
 
-`@m0veax`_, `@fignew`_, `@muued`_, `@isigmund`_, `@denilsonsa`_, `@sAksham-Ar`_, `@philpagel`_, `@davemachado`_, `@2600box`_, `@qcasey`_, `@kpj`_.
+`@m0veax`_, `@fignew`_, `@muued`_, `@isigmund`_, `@denilsonsa`_, `@sAksham-Ar`_, `@philpagel`_, `@davemachado`_, `@2600box`_, `@qcasey`_, `@kpj`_, `@filcuk`_, `@mweimerskirch`_, 
 
 paperless-ng 1.5.0
 ##################
@@ -1517,6 +1519,8 @@ bulk of the work on this big change.
 .. _@2600box: https://github.com/2600box
 .. _@qcasey: https://github.com/qcasey
 .. _@kpj: https://github.com/kpj
+.. _@mweimerskirch: https://github.com/mweimerskirch
+.. _@filcuk: https://github.com/filcuk
 
 .. _#20: https://github.com/the-paperless-project/paperless/issues/20
 .. _#44: https://github.com/the-paperless-project/paperless/issues/44
