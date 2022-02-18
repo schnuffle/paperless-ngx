@@ -12,19 +12,20 @@ Thanks to everyone on the paperless-ngx team for their excellent work in revivin
 
 This release merges several pending PRs, including bug fixes and minor UI updates. Major changes include:
 
-* Updated translations.
 * Updated docs, containers, to paperless-ngx.
 * Updated Python and Angular dependencies.
 * `@shamoon`_ improved the PDF viewer on mobile (#2).
+* `@shamoon`_ added warnings for unsaved changes, with smart edit buttons (#13).
 * `@amenk`_ fixed the search box overlay menu on mobile (#32).
 * `@dblitt`_ updated the login form to not auto-capitalize usernames (#36).
 * `@evilsidekick293`_ made the worker timeout configurable (#37). See ``PAPERLESS_WORKER_TIMEOUT``.
+* `@Nicarim`_ fixed downloads of UTF-8 formatted documents in Firefox (#56).
 * `@mweimerskirch`_ sorted the language dropdown by locale (#78).
 * `@mweimerskirch`_ enabled the Czech (#83) and Danish (#84) translations.
 
-Thank you to the following people for their documentation updates:
+Thank you to the following people for their documentation updates, translations, minor fixes, and testing:
 
-`@m0veax`_, `@fignew`_, `@muued`_, `@isigmund`_, `@denilsonsa`_, `@sAksham-Ar`_, `@philpagel`_, `@davemachado`_, `@2600box`_, `@qcasey`_, `@kpj`_, `@filcuk`_, `@mweimerskirch`_, 
+`@m0veax`_, `@a17t`_, `@fignew`_, `@muued`_, `@bauerj`_, `@isigmund`_, `@denilsonsa`_, `@mweimerskirch`_, `@alexander-bauer`_, `@apeltzer`_, `@tribut`_, `@yschroeder`_, `@gador`_, `@sAksham-Ar`_, `@sbrunner`_, `@philpagel`_, `@davemachado`_, `@2600box`_, `@qcasey`_, `@Nicarim`_, `@kpj`_, `@filcuk`_, `@Timoms`_
 
 paperless-ng 1.5.0
 ##################
@@ -1521,6 +1522,17 @@ bulk of the work on this big change.
 .. _@kpj: https://github.com/kpj
 .. _@mweimerskirch: https://github.com/mweimerskirch
 .. _@filcuk: https://github.com/filcuk
+.. _@FrankStrieter: https://github.com/FrankStrieter
+.. _@tribut: https://github.com/tribut
+.. _@yschroeder: https://github.com/yschroeder
+.. _@gador: https://github.com/gador
+.. _@Nicarim: https://github.com/Nicarim
+.. _@bauerj: https://github.com/bauerj
+.. _@a17t: https://github.com/a17t
+.. _@alexander-bauer: https://github.com/alexander-bauer
+.. _@apeltzer: https://github.com/apeltzer
+.. _@Timoms: https://github.com/Timoms
+.. _@sbrunner: https://github.com/sbrunner
 
 .. _#20: https://github.com/the-paperless-project/paperless/issues/20
 .. _#44: https://github.com/the-paperless-project/paperless/issues/44
