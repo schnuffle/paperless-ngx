@@ -16,6 +16,7 @@ Version 1.6.0 merges several pending PRs from jonaswinkler's repo and includes n
 * Updated Python and Angular dependencies.
 * Dropped support for Python 3.7.
 * Dropped support for Ansible playbooks (thanks `@slankes`_ #109). If someone would like to continue supporting them, please see the `ansible repo`_.
+* Python code is now required Black formatting (thanks `@kpj`_ #168).
 * `@tribut`_ added support for a custom SSO logout redirect (jonaswinkler#1258). See ``PAPERLESS_LOGOUT_REDIRECT_URL``.
 * `@shamoon`_ added a loading indicator when document list is reloading (jonaswinkler#1297).
 * `@shamoon`_ improved the PDF viewer on mobile (#2).
