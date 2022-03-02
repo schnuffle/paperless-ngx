@@ -32,10 +32,11 @@ Version 1.6.0 merges several pending PRs from jonaswinkler's repo and includes n
 * `@cschmatzler`_ enabled specifying the webserver port (#124). See ``PAPERLESS_PORT``.
 * `@muellermartin`_ fixed an error when uploading transparent PNGs (#133).
 * `@shamoon`_ created a slick new logo (#165).
+* `@tim-vogel`_ fixed exports missing groups (#193).
 
 Thank you to the following people for their documentation updates, fixes, and comprehensive testing:
 
-`@m0veax`_, `@a17t`_, `@fignew`_, `@muued`_, `@bauerj`_, `@isigmund`_, `@denilsonsa`_, `@mweimerskirch`_, `@alexander-bauer`_, `@apeltzer`_, `@tribut`_, `@yschroeder`_, `@gador`_, `@sAksham-Ar`_, `@sbrunner`_, `@philpagel`_, `@davemachado`_, `@2600box`_, `@qcasey`_, `@Nicarim`_, `@kpj`_, `@filcuk`_, `@Timoms`_, `@mattlamb99`_, `@padraigkitterick`_, `@ajkavanagh`_, `@Tooa`_, `@Unkn0wnCat`_, `@pewter77`_, `@stumpylog`_, `@Toxix`_, `@azapater`_
+`@m0veax`_, `@a17t`_, `@fignew`_, `@muued`_, `@bauerj`_, `@isigmund`_, `@denilsonsa`_, `@mweimerskirch`_, `@alexander-bauer`_, `@apeltzer`_, `@tribut`_, `@yschroeder`_, `@gador`_, `@sAksham-Ar`_, `@sbrunner`_, `@philpagel`_, `@davemachado`_, `@2600box`_, `@qcasey`_, `@Nicarim`_, `@kpj`_, `@filcuk`_, `@Timoms`_, `@mattlamb99`_, `@padraigkitterick`_, `@ajkavanagh`_, `@Tooa`_, `@Unkn0wnCat`_, `@pewter77`_, `@stumpylog`_, `@Toxix`_, `@azapater`_, `@jschpp`_
 
 Another big thanks to the people who have contributed translations:
 
@@ -43,6 +44,10 @@ Another big thanks to the people who have contributed translations:
 * jo.vandeginste suggested 21 translations into Dutch.
 * Lars Sørensen (Lrss) suggested 486 translations into Danish.
 * Alex (Sky-Dragon) voted for 46 translations in German.
+* Yannic Schröder (yschroeder) suggested 14 translations into German.
+* David Morais Ferreira (DavidMoraisFerreira) voted for 10 translations in Portuguese and Luxembourgish.
+* David Morais Ferreira (DavidMoraisFerreira) suggested 88 translations into French, German, Portuguese, Portuguese, Brazilian and Luxembourgish.
+* 汪泠沣 (wlfcss) suggested 13 translations into Chinese Traditional.
 
 paperless-ng 1.5.0
 ##################
@@ -1563,6 +1568,8 @@ bulk of the work on this big change.
 .. _@Toxix: https://github.com/Toxix
 .. _@benjaminfrank: https://github.com/benjaminfrank
 .. _@azapater: https://github.com/azapater
+.. _@tim-vogel: https://github.com/tim-vogel
+.. _@jschpp: https://github.com/jschpp
 
 .. _#20: https://github.com/the-paperless-project/paperless/issues/20
 .. _#44: https://github.com/the-paperless-project/paperless/issues/44
