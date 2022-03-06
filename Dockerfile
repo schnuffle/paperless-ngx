@@ -7,93 +7,9 @@ RUN npm update npm -g && npm install
 RUN ./node_modules/.bin/ng build --configuration production
 
 
-FROM ubuntu:20.04 AS jbig2enc
-
-WORKDIR /usr/src/jbig2enc
-
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential automake libtool libleptonica-dev zlib1g-dev git ca-certificates
-
-RUN git clone https://github.com/agl/jbig2enc .
-RUN ./autogen.sh
-RUN ./configure && make
-
-
-FROM python:3.9-slim-bullseye
-
-# Binary dependencies
-RUN apt-get update \
-	&& apt-get -y --no-install-recommends install \
-  	# Basic dependencies
-		curl \
-		gnupg \
-		imagemagick \
-		gettext \
-		tzdata \
-		gosu \
-		# fonts for text file thumbnail generation
-		fonts-liberation \
-		# for Numpy
-		libatlas-base-dev \
-		libxslt1-dev \
-		# thumbnail size reduction
-		optipng \
-		libxml2 \
-		pngquant \
-		unpaper \
-		zlib1g \
-		ghostscript \
-		icc-profiles-free \
-  	# Mime type detection
-		file \
-		libmagic-dev \
-		media-types \
-		# OCRmyPDF dependencies
-		liblept5 \
-		tesseract-ocr \
-		tesseract-ocr-eng \
-		tesseract-ocr-deu \
-		tesseract-ocr-fra \
-		tesseract-ocr-ita \
-		tesseract-ocr-spa \
-  && rm -rf /var/lib/apt/lists/*
-
-# copy jbig2enc
-COPY --from=jbig2enc /usr/src/jbig2enc/src/.libs/libjbig2enc* /usr/local/lib/
-COPY --from=jbig2enc /usr/src/jbig2enc/src/jbig2 /usr/local/bin/
-COPY --from=jbig2enc /usr/src/jbig2enc/src/*.h /usr/local/include/
+FROM ghcr.io/${{ github.actor }}/paperless-ngx-base:latest
 
 WORKDIR /usr/src/paperless/src/
-
-COPY requirements.txt ../
-
-# Python dependencies
-RUN apt-get update \
-  && apt-get -y --no-install-recommends install \
-		build-essential \
-		libpq-dev \
-		git \
-		zlib1g-dev \
-		libjpeg62-turbo-dev \
-	&& if [ "$(uname -m)" = "armv7l" ] || [ "$(uname -m)" = "aarch64" ]; \
-	  then echo "Building qpdf" \
-	  && mkdir -p /usr/src/qpdf \
-	  && cd /usr/src/qpdf \
-	  && git clone https://github.com/qpdf/qpdf.git . \
-	  && git checkout --quiet release-qpdf-10.6.2 \
-	  && ./configure \
-	  && make \
-	  && make install \
-	  && cd /usr/src/paperless/src/ \
-	  && rm -rf /usr/src/qpdf; \
-	else \
-	  echo "Skipping qpdf build because pikepdf binary wheels are available."; \
-	fi \
-    && python3 -m pip install --upgrade pip wheel \
-	&& python3 -m pip install --default-timeout=1000 --upgrade --no-cache-dir supervisor \
-  	&& python3 -m pip install --default-timeout=1000 --no-cache-dir -r ../requirements.txt \
-	&& apt-get -y purge build-essential git zlib1g-dev libjpeg62-turbo-dev \
-	&& apt-get -y autoremove --purge \
-	&& rm -rf /var/lib/apt/lists/*
 
 # setup docker-specific things
 COPY docker/ ./docker/
@@ -129,6 +45,6 @@ CMD ["/usr/local/bin/supervisord", "-c", "/etc/supervisord.conf"]
 
 LABEL org.opencontainers.image.authors="paperless-ngx team <hello@paperless-ngx.com>"
 LABEL org.opencontainers.image.documentation="https://paperless-ngx.readthedocs.io/en/latest/"
-LABEL org.opencontainers.image.source="https://github.com/paperless-ngx/paperless-ngx"
-LABEL org.opencontainers.image.url="https://github.com/paperless-ngx/paperless-ngx"
+LABEL org.opencontainers.image.source="https://github.com/schnuffle/paperless-ngx"
+LABEL org.opencontainers.image.url="https://github.com/schnuffle/paperless-ngx"
 LABEL org.opencontainers.image.licenses="GPL-3.0-only"
