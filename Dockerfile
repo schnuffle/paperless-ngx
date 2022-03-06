@@ -7,7 +7,7 @@ RUN npm update npm -g && npm install
 RUN ./node_modules/.bin/ng build --configuration production
 
 
-FROM ghcr.io/${{ github.actor }}/paperless-ngx-base:latest
+FROM ghcr.io/schnuffle/paperless-ngx-base:latest
 
 WORKDIR /usr/src/paperless/src/
 
