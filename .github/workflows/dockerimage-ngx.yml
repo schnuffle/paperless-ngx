@@ -1,12 +1,9 @@
-name: ci
+name: dockerimage-ngx
 
 on:
   push:
     tags:
-      - ngx-*
-    branches-ignore:
-      - 'translations**'
-  pull_request:
+      - ngx-image*
     branches-ignore:
       - 'translations**'
 
@@ -14,7 +11,7 @@ jobs:
 
   # build and push image to docker hub.
   build-docker-image:
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/ngx-image'))
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/ngx-image')
     runs-on: ubuntu-latest
     steps:
       -
