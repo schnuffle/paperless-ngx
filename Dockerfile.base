@@ -76,8 +76,9 @@ WORKDIR /usr/src/paperless/src/
 COPY requirements.txt ../
 
 # Python dependencies and library dependencies
-RUN if [ "$(uname -m)" = "armv7l" ] \
-	then echo "Building qpdf" \
+RUN if [ "$(uname -m)" = "armv7l" ]; \
+  then \
+    echo "Building qpdf" \
     && mkdir -p /usr/src/qpdf \
     && cd /usr/src/qpdf \
     && git clone https://github.com/qpdf/qpdf.git . \

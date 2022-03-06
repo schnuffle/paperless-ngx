@@ -9,7 +9,7 @@ on:
 
 jobs:
   # build and push base image to github registry.
-  build-docker-image:
+  build-docker-baseimage:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/ngx-base')
     runs-on: ubuntu-latest
     steps:
