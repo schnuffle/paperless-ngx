@@ -1,4 +1,4 @@
-FROM ghcr.io/schnuffle/paperless-ngx-basenode AS compile-frontend
+FROM ghcr.io/schnuffle/paperless-ngx-base-nodejs AS compile-frontend
 
 COPY . /src
 
