@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - ngx-base-ngx*
+    paths:
+      - './requirements.txt'
     branches-ignore:
       - 'translations**'
 
