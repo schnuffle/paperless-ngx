@@ -10,8 +10,8 @@ RUN ./configure && make
 
 
 FROM python:3.9-slim-bullseye
-ARG QPDF_VERSION="release-qpdf-10.6.2"
 
+ARG QPDF_VERSION="release-qpdf-10.6.2"
 ARG BUILD_PACKAGES="\
   automake \
   autotools-dev \
@@ -102,5 +102,5 @@ RUN if [ "$(uname -m)" = "armv7l" ] || [ "$(uname -m)" = "aarch64" ]; \
 LABEL org.opencontainers.image.authors="paperless-ngx team <hello@paperless-ngx.com>"
 LABEL org.opencontainers.image.documentation="https://paperless-ngx.readthedocs.io/en/latest/"
 LABEL org.opencontainers.image.source="https://github.com/schnuffle/paperless-ngx-base"
-LABEL org.opencontainers.image.url="https://github.com/paperless-ngx/paperless-ngx-base"
+LABEL org.opencontainers.image.url="https://github.com/schnuffle/paperless-ngx-base"
 LABEL org.opencontainers.image.licenses="GPL-3.0-only"
