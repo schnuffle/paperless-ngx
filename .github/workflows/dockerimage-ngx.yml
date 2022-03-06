@@ -2,6 +2,8 @@ name: dockerimage-ngx
 
 on:
   push:
+    branches:    
+      - 'feature-split-dockerimage'  
     tags:
       - ngx-image*
     branches-ignore:
