@@ -1,9 +1,9 @@
-FROM node:16 AS compile-frontend
+FROM ghcr.io/schnuffle/paperless-ngx-basenode AS compile-frontend
 
 COPY . /src
 
 WORKDIR /src/src-ui
-RUN npm update npm -g && npm install
+RUN npm install
 RUN ./node_modules/.bin/ng build --configuration production
 
 
