@@ -10,6 +10,8 @@ RUN ./configure && make
 
 
 FROM python:3.9-slim-bullseye
+ARG QPDF_VERSION="release-qpdf-10.6.2"
+
 ARG BUILD_PACKAGES="\
   automake \
   autotools-dev \
@@ -76,13 +78,13 @@ WORKDIR /usr/src/paperless/src/
 COPY requirements.txt ../
 
 # Python dependencies and library dependencies
-RUN if [ "$(uname -m)" = "armv7l" ]; \
+RUN if [ "$(uname -m)" = "armv7l" ] || [ "$(uname -m)" = "aarch64" ]; \
   then \
     echo "Building qpdf" \
     && mkdir -p /usr/src/qpdf \
     && cd /usr/src/qpdf \
     && git clone https://github.com/qpdf/qpdf.git . \
-    && git checkout --quiet release-qpdf-10.6.2 \
+    && git checkout --quiet ${QPDF_VERSION} \
     && ./configure \
     && make \
     && make install \
