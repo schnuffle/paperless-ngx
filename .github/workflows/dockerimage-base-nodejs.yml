@@ -2,6 +2,8 @@ name: docker-baseimage-nodejs
 
 on:
   push:
+    branches:    
+      - 'feature-split-dockerimage'
     tags:
       - ngx-base-nodejs*
     paths:

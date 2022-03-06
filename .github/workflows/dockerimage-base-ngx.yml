@@ -2,7 +2,9 @@ name: docker-baseimage-ngx
 
 on:
   push:
-    tags:
+    branches:    
+      - 'feature-split-dockerimage'  
+    tags:    
       - ngx-base-ngx*
     paths:
       - './requirements.txt'
@@ -10,7 +12,7 @@ on:
       - 'translations**'
 
 jobs:
-  # build and push basengx image to github registry.
+  # build and push base-ngx image to organizations ghcr.io registry.
   build-docker-baseimage-ngx:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/ngx-base-ngx')
     runs-on: ubuntu-latest
