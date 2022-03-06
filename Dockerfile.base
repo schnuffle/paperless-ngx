@@ -77,19 +77,19 @@ COPY requirements.txt ../
 
 # Python dependencies and library dependencies
 RUN if [ "$(uname -m)" = "armv7l" ] \
-	  then echo "Building qpdf" \
-	  && mkdir -p /usr/src/qpdf \
-	  && cd /usr/src/qpdf \
-	  && git clone https://github.com/qpdf/qpdf.git . \
-	  && git checkout --quiet release-qpdf-10.6.2 \
-	  && ./configure \
-	  && make \
-	  && make install \
-	  && cd /usr/src/paperless/src/ \
-	  && rm -rf /usr/src/qpdf; \
-	else \
-	  echo "Skipping qpdf build because pikepdf binary wheels are available."; \
-	fi \
+	then echo "Building qpdf" \
+    && mkdir -p /usr/src/qpdf \
+    && cd /usr/src/qpdf \
+    && git clone https://github.com/qpdf/qpdf.git . \
+    && git checkout --quiet release-qpdf-10.6.2 \
+    && ./configure \
+    && make \
+    && make install \
+    && cd /usr/src/paperless/src/ \
+    && rm -rf /usr/src/qpdf; \
+  else \
+    echo "Skipping qpdf build because pikepdf binary wheels are available."; \
+  fi \
   && python3 -m pip install --upgrade pip wheel \
 	&& python3 -m pip install --default-timeout=1000 --upgrade --no-cache-dir supervisor \
   && python3 -m pip install --default-timeout=1000 --no-cache-dir -r ../requirements.txt \
