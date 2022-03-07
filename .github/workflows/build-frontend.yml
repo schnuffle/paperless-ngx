@@ -18,5 +18,5 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
-      - run: npm install src-ui
-      - run: src-ui/node_modules/.bin/ng build --configuration production src-ui
+      - run: cd src-ui && npm install src-ui
+      - run: cd src-ui &&  ./node_modules/.bin/ng build --configuration production src-ui
