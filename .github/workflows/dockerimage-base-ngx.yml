@@ -8,8 +8,6 @@ on:
       - ngx-base-ngx*
     paths:
       - './requirements.txt'
-    branches-ignore:
-      - 'translations**'
 
 jobs:
   # build and push base-ngx image to organizations ghcr.io registry.

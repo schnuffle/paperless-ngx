@@ -9,8 +9,6 @@ on:
     paths:
       - './src-ui/package.json'
       - './src-ui/package-lock.json'
-    branches-ignore:
-      - 'translations**'
 
 jobs:
   build-docker-baseimage-nodejs:
