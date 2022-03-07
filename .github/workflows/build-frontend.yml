@@ -8,7 +8,6 @@ on:
       - ngx-frontend*
 
 jobs:
-
   # build and push image to docker hub.
   build-frontend:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/ngx-frontend')
@@ -16,7 +15,6 @@ jobs:
     steps:
       - name: Checkout software
         uses: actions/checkout@v2
-
       - name: build nodejs
         uses: actions/setup-node@v2
         with:
@@ -25,7 +23,6 @@ jobs:
           cache-dependency-path: src-ui/package-lock.json
         - run: cd src-ui && npm install
         - run: cd src-ui &&  ./node_modules/.bin/ng build --configuration production
-      
       - name: Prepare Docker
         id: prepare
         run: |
@@ -41,7 +38,7 @@ jobs:
           fi
           echo ::set-output name=tags::${TAGS}
           echo ::set-output name=inspect_tag::${INSPECT_TAG}
-    
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
       - name: Set up QEMU
