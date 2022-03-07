@@ -20,7 +20,7 @@ jobs:
         name: Prepare Docker
         id: prepare
         run: |
-          IMAGE_NAME=IMAGE_NAME=ghcr.io/schnuffle/paperless-ngx
+          IMAGE_NAME=ghcr.io/schnuffle/paperless-ngx
           if [[ $GITHUB_REF == refs/tags/ngx-project* ]]; then
             TAGS=${IMAGE_NAME}:${GITHUB_REF#refs/tags/ngx-project},${IMAGE_NAME}:latest
             INSPECT_TAG=${IMAGE_NAME}:latest
