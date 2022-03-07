@@ -5,7 +5,7 @@ on:
     branches:    
       - 'feature-split-dockerimage'  
     tags:    
-      - ngx-base-ngx*
+      - ngx-base*
     paths:
       - './requirements.txt'
 
