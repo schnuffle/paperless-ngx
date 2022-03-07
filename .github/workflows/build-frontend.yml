@@ -14,13 +14,9 @@ jobs:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/ngx-frontend')
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v2
-      -
-        name: Build frontend
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
           node-version: '14'
-        - run: npm install src-ui
-        - run: src-ui/node_modules/.bin/ng build --configuration production src-ui
+      - run: npm install src-ui
+      - run: src-ui/node_modules/.bin/ng build --configuration production src-ui
