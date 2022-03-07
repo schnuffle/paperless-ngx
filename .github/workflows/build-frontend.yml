@@ -13,17 +13,8 @@ jobs:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/ngx-frontend')
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout software
-        uses: actions/checkout@v2
-      - name: build nodejs
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-          cache: 'npm'
-          cache-dependency-path: src-ui/package-lock.json
-        - run: cd src-ui && npm install
-        - run: cd src-ui &&  ./node_modules/.bin/ng build --configuration production
-      - name: Prepare Docker
+      -
+        name: Prepare Docker
         id: prepare
         run: |
           IMAGE_NAME=ghcr.io/${{ github.repository }}
@@ -38,8 +29,21 @@ jobs:
           fi
           echo ::set-output name=tags::${TAGS}
           echo ::set-output name=inspect_tag::${INSPECT_TAG}
+      -
+        name: Checkout software
+        uses: actions/checkout@v2
+      -
+        name: build nodejs
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'npm'
+          cache-dependency-path: src-ui/package-lock.json
+        run: cd src-ui && npm install &&  ./node_modules/.bin/ng build --configuration production
 
-      - name: Set up Docker Buildx
+
+      - 
+        name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
