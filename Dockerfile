@@ -36,3 +36,5 @@ VOLUME ["/usr/src/paperless/data", "/usr/src/paperless/media", "/usr/src/paperle
 ENTRYPOINT ["/sbin/docker-entrypoint.sh"]
 EXPOSE 8000
 CMD ["/usr/local/bin/supervisord", "-c", "/etc/supervisord.conf"]
+
+LABEL org.opencontainers.image.source=https://github.com/schnuffle/paperless-ngx
