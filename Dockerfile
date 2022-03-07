@@ -22,6 +22,8 @@ COPY gunicorn.conf.py ../
 # copy app
 #COPY --from=compile-frontend /src/src/ ./
 COPY src-ui ./
+COPY src ./
+
 
 # add users, setup scripts
 RUN addgroup --gid 1000 paperless \
