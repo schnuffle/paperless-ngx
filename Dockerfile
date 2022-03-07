@@ -1,12 +1,3 @@
-FROM ghcr.io/schnuffle/paperless-ngx-base-nodejs AS compile-frontend
-
-COPY . /src
-
-WORKDIR /src/src-ui
-RUN npm install
-RUN ./node_modules/.bin/ng build --configuration production
-
-
 FROM ghcr.io/schnuffle/paperless-ngx-base:latest
 
 WORKDIR /usr/src/paperless/src/
@@ -29,7 +20,8 @@ RUN cd docker \
 COPY gunicorn.conf.py ../
 
 # copy app
-COPY --from=compile-frontend /src/src/ ./
+#COPY --from=compile-frontend /src/src/ ./
+COPY src-ui ./
 
 # add users, setup scripts
 RUN addgroup --gid 1000 paperless \
