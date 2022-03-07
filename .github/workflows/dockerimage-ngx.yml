@@ -6,8 +6,6 @@ on:
       - 'feature-split-dockerimage'  
     tags:
       - ngx-image*
-    branches-ignore:
-      - 'translations**'
 
 jobs:
 
