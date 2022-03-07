@@ -6,9 +6,8 @@ on:
       - 'feature-split-dockerimage'  
     tags:
       - ngx-project*
-
 jobs:
-  build-project:
+  build-all:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/ngx-project')
     runs-on: ubuntu-latest
     steps:
