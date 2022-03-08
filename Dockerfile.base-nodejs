@@ -1,8 +1,0 @@
-FROM node:16
-
-COPY ./src-ui/package-lock.json /src/src-ui/
-COPY ./src-ui/package.json /src/src-ui/
-
-WORKDIR /src/src-ui
-
-RUN npm update npm -g && npm install
