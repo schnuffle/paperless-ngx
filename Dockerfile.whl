@@ -9,9 +9,65 @@ RUN ./autogen.sh
 RUN ./configure && make
 
 
-FROM ghcr.io/schnuffle/paperless-ngx-base:latest
+FROM python:3.9-slim-bullseye
+
+ARG BUILD_PACKAGES=""
+ARG RUNTIME_PACKAGES="\
+  curl \
+  # fonts for text file thumbnail generation
+  fonts-liberation \
+  file \
+  gettext \
+  ghostscript \
+  gnupg \
+  gosu \
+  gunicorn \
+  icc-profiles-free \
+  imagemagick \
+  liblept5 \
+  libxml2 \
+  media-types \
+  optipng \
+  pngquant \
+  python3 \
+  python3-setuptools \
+  qpdf \
+  redis \
+  tesseract-ocr \
+  tesseract-ocr-eng \
+  tesseract-ocr-deu \
+  tesseract-ocr-fra \
+  tesseract-ocr-ita \
+  tesseract-ocr-spa \
+  tzdata \
+  unpaper \
+  zlib1g"
+
+# Binary dependencies
+RUN apt-get update \
+  && apt-get -y upgrade \
+	&& apt-get -y --no-install-recommends install $BUILD_PACKAGES \
+	&& apt-get -y --no-install-recommends install $RUNTIME_PACKAGES
+
+# copy jbig2enc
+COPY --from=jbig2enc /usr/src/jbig2enc/src/.libs/libjbig2enc* /usr/local/lib/
+COPY --from=jbig2enc /usr/src/jbig2enc/src/jbig2 /usr/local/bin/
+COPY --from=jbig2enc /usr/src/jbig2enc/src/*.h /usr/local/include/
 
 WORKDIR /usr/src/paperless/src/
+COPY requirements.txt ../
+
+RUN python3 -m pip install --upgrade pip wheel \
+	&& python3 -m pip install --default-timeout=1000 --upgrade --no-cache-dir supervisor \
+	&& python3 -m pip install --default-timeout=1000 
+  && python3 -m pip install --default-timeout=1000 --no-cache-dir -r ../requirements.txt \
+	&& apt-get -y --autoremove purge $BUILD_PACKAGES \
+  && apt-get clean \
+	&& rm -rf /var/lib/apt/lists/* \
+  && rm -rf /tmp/* \
+  && rm -rf /var/tmp/* \
+  && rm -rf /var/cache/apt/archives/* \
+  && truncate -s 0 /var/log/*log
 
 # setup docker-specific things
 COPY docker/ ./docker/
