@@ -1,0 +1,74 @@
+name: docker-baseimage-ngxwheel
+
+on:
+  workflow_dispatch:
+    # Inputs the workflow accepts.
+    inputs:
+      name:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Building and uploading pikepdf for armv7'
+        # Default value if no value is explicitly provided
+        default: 'beta'
+        # Input has to be provided for the workflow to run
+        required: true
+
+jobs:
+  # build and push base-ngx image to organizations ghcr.io registry.
+  build-docker-baseimages:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/ngx-basewheel')
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Prepare
+        id: prepare
+        run: |
+          IMAGE_NAME=ghcr.io/schnuffle/paperless-ngx-basewheel
+          if [[ $GITHUB_REF == refs/tags/ngx-basewheel* ]]; then
+            TAGS=${IMAGE_NAME}:${GITHUB_REF#refs/tags/ngx-basewheel},${IMAGE_NAME}:latest
+            INSPECT_TAG=${IMAGE_NAME}:latest
+          else
+            exit 1
+          fi
+          echo ::set-output name=tags::${TAGS}
+          echo ::set-output name=inspect_tag::${INSPECT_TAG}
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      -
+        name: Login to Github Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile.base-ngxwheel
+          platforms: linux/arm/v7
+          push: true
+          tags: ${{ steps.prepare.outputs.tags }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+
+        # This ugly bit is necessary if you don't want your cache to grow forever
+        # till it hits GitHub's limit of 5GB.
+        # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+      -
+        name: Inspect image
+        run: |
+          docker buildx imagetools inspect ${{ steps.prepare.outputs.inspect_tag }}
