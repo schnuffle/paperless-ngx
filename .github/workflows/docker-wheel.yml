@@ -1,16 +1,8 @@
 name: docker-base-ngxwheel
 
 on:
-  workflow_dispatch:
-    # Inputs the workflow accepts.
-    inputs:
-      name:
-        # Friendly description to be shown in the UI instead of 'name'
-        description: 'Building and uploading image based on wheels'
-        # Default value if no value is explicitly provided
-        default: 'beta'
-        # Input has to be provided for the workflow to run
-        required: false
+  push:
+    branches: feature-split-dockerimage
 
 jobs:
   # build and push base-ngx image to organizations ghcr.io registry.
