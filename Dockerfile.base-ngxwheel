@@ -81,8 +81,9 @@ COPY requirements.txt ../
 
 # Python dependencies and library dependencies
 RUN python3 -m pip install --upgrade pip wheel \
-  if [ "$(uname -m)" = "armv7l" ] || [ "$(uname -m)" = "aarch64" ]; \
-    pip intall ${PIKEPDF_URL}
+  && echo "Installing wheel" \
+  && if [ "$(uname -m)" = "armv7l" ] || [ "$(uname -m)" = "aarch64" ]; \
+      pip intall ${PIKEPDF_URL} \
   else \
     echo "Skipping qpdf build because pikepdf binary wheels are available."; \
   fi \
