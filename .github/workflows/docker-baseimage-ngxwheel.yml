@@ -1,4 +1,4 @@
-name: docker-baseimage-ngxwheel
+name: docker-base-ngxwheel
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ on:
 
 jobs:
   # build and push base-ngx image to organizations ghcr.io registry.
-  build-docker-baseimages:
+  build-docker-basewheel:
     runs-on: ubuntu-latest
     steps:
       -
