@@ -10,7 +10,7 @@ on:
         # Default value if no value is explicitly provided
         default: 'beta'
         # Input has to be provided for the workflow to run
-        required: true
+        required: false
 
 jobs:
   # build and push base-ngx image to organizations ghcr.io registry.
