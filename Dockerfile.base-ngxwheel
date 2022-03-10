@@ -12,7 +12,7 @@ RUN ./configure && make
 FROM python:3.9-slim-bullseye
 
 ARG DEBIAN_FRONTEND=noninteractive
-ARG PIKEPDF_URL="https://github.com/schnuffle/build-pikepdfwheel/releases/download/1.0.4/pikepdf-5.0.1-cp39-cp39-linux_armv7l.whl"
+ARG PIKEPDF_URL="https://github.com/schnuffle/build-pikepdfwheel/releases/download/latest/pikepdf-5.0.1-cp39-cp39-linux_armv7l.whl"
 ARG BUILD_PACKAGES="\
   automake \
   autotools-dev \
