@@ -83,11 +83,11 @@ COPY requirements.txt ../
 # Python dependencies and library dependencies
 RUN python3 -m pip install --upgrade pip wheel \
   && echo "Installing wheel" \
-  && if [ "$(uname -m)" = "armv7l" ] || [ "$(uname -m)" = "aarch64" ]; \
-      pip intall ${PIKEPDF_URL_ARMV7} \
+  && if [ "$(uname -m)" = "armv7l" ]; \
+      pip install ${PIKEPDF_URL_ARMV7} \
   fi \
 	&& if [ "$(uname -m)" = "aarch64" ]; \
-	  pip intall ${PIKEPDF_URL_ARM64} \
+	  pip install ${PIKEPDF_URL_ARM64} \
   fi \
   && python3 -m pip install --default-timeout=1000 --upgrade --no-cache-dir supervisor \
   && python3 -m pip install --default-timeout=1000 --no-cache-dir -r ../requirements.txt \
