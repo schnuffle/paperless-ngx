@@ -6,7 +6,7 @@ on:
     inputs:
       name:
         # Friendly description to be shown in the UI instead of 'name'
-        description: 'Building and uploading pikepdf for armv7'
+        description: 'Building and uploading image based on wheels'
         # Default value if no value is explicitly provided
         default: 'beta'
         # Input has to be provided for the workflow to run
@@ -15,7 +15,6 @@ on:
 jobs:
   # build and push base-ngx image to organizations ghcr.io registry.
   build-docker-baseimages:
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/ngx-basewheel')
     runs-on: ubuntu-latest
     steps:
       -
@@ -23,12 +22,8 @@ jobs:
         id: prepare
         run: |
           IMAGE_NAME=ghcr.io/schnuffle/paperless-ngx-basewheel
-          if [[ $GITHUB_REF == refs/tags/ngx-basewheel* ]]; then
-            TAGS=${IMAGE_NAME}:${GITHUB_REF#refs/tags/ngx-basewheel},${IMAGE_NAME}:latest
-            INSPECT_TAG=${IMAGE_NAME}:latest
-          else
-            exit 1
-          fi
+          TAGS=${IMAGE_NAME}:latest
+          INSPECT_TAG=${IMAGE_NAME}:latest
           echo ::set-output name=tags::${TAGS}
           echo ::set-output name=inspect_tag::${INSPECT_TAG}
       -
