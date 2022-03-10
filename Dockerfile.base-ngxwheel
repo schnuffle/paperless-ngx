@@ -12,7 +12,8 @@ RUN ./configure && make
 FROM python:3.9-slim-bullseye
 
 ARG DEBIAN_FRONTEND=noninteractive
-ARG PIKEPDF_URL="https://github.com/schnuffle/build-pikepdfwheel/releases/download/latest/pikepdf-5.0.1-cp39-cp39-linux_armv7l.whl"
+ARG PIKEPDF_URL_ARMV7="https://github.com/schnuffle/build-pikepdfwheel/releases/download/latest/pikepdf-5.0.1-cp39-cp39-linux_armv7l.whl"
+ARG PIKEPDF_URL_ARM64="https://github.com/schnuffle/build-pikepdfwheel/releases/download/latest/pikepdf-5.0.1-cp39-cp39-linux_aarch64.whl"
 ARG BUILD_PACKAGES="\
   automake \
   autotools-dev \
@@ -83,9 +84,10 @@ COPY requirements.txt ../
 RUN python3 -m pip install --upgrade pip wheel \
   && echo "Installing wheel" \
   && if [ "$(uname -m)" = "armv7l" ] || [ "$(uname -m)" = "aarch64" ]; \
-      pip intall ${PIKEPDF_URL} \
-  else \
-    echo "Skipping qpdf build because pikepdf binary wheels are available."; \
+      pip intall ${PIKEPDF_URL_ARMV7} \
+  fi \
+	&& if [ "$(uname -m)" = "aarch64" ]; \
+	  pip intall ${PIKEPDF_URL_ARM64} \
   fi \
   && python3 -m pip install --default-timeout=1000 --upgrade --no-cache-dir supervisor \
   && python3 -m pip install --default-timeout=1000 --no-cache-dir -r ../requirements.txt \
