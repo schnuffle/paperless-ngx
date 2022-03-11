@@ -12,13 +12,16 @@ RUN ./configure && make
 FROM python:3.9-slim-bullseye
 
 ARG DEBIAN_FRONTEND=noninteractive
-ARG PIKEPDF_URL_ARMV7="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.2/pikepdf-5.0.1-cp39-cp39-linux_armv7l.whl"
-ARG LXML_URL_ARMV7="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.2/lxml-4.8.0-cp39-cp39-linux_armv7l.whl"
-ARG PILLOW_URL_ARMV7="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.2/Pillow-9.0.1-cp39-cp39-linux_armv7l.whl"
+ARG PIKEPDF_URL_ARMV7="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.8/pikepdf-5.0.1-cp39-cp39-linux_armv7l.whl"
+ARG LXML_URL_ARMV7="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.8/lxml-4.8.0-cp39-cp39-linux_armv7l.whl"
+ARG PILLOW_URL_ARMV7="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.8Pillow-9.0.1-cp39-cp39-linux_armv7l.whl"
+ARG JBIG2ENC_URL_ARMV7="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.8/jbig2enc-armv7l.tgz"
 
-ARG PIKEPDF_URL_ARM64="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.2/pikepdf-5.0.1-cp39-cp39-linux_aarch64.whl"
-ARG LXML_URL_ARM64="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.2/lxml-4.8.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.manylinux_2_24_aarch64.whl"
-ARG PILLOW_URL_ARM64="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.2/Pillow-9.0.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
+ARG PIKEPDF_URL_ARM64="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.8/pikepdf-5.0.1-cp39-cp39-linux_aarch64.whl"
+ARG LXML_URL_ARM64="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.8/lxml-4.8.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.manylinux_2_24_aarch64.whl"
+ARG PILLOW_URL_ARM64="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.8/Pillow-9.0.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
+ARG JBIG2ENC_URL_ARM64="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.8/jbig2enc-arm64.tgz"
+
 ARG BUILD_PACKAGES="\
   automake \
   autotools-dev \
@@ -76,10 +79,20 @@ RUN apt-get update \
 	&& apt-get -y --no-install-recommends install $BUILD_PACKAGES \
 	&& apt-get -y --no-install-recommends install $RUNTIME_PACKAGES 
 
-# copy jbig2enc
-COPY --from=jbig2enc /usr/src/jbig2enc/src/.libs/libjbig2enc* /usr/local/lib/
-COPY --from=jbig2enc /usr/src/jbig2enc/src/jbig2 /usr/local/bin/
-COPY --from=jbig2enc /usr/src/jbig2enc/src/*.h /usr/local/include/
+# extract jbig2enc
+RUN if [ "$(uname -m)" = "armv7l" ]; \
+  then \
+	  wget $JBIG2ENC_URL_ARMV7 \
+		&& tar xzf jbig2enc-armv7.tgz \
+	fi \
+	&& if [ "$(uname -m)" = "aarch64" ]; \	
+	then \
+	  wget $JBIG2ENC_URL_ARM64 \
+		&& tar xzf jbig2enc-arm64.tgz \
+	fi \
+	&& cp ./jbig2enc/jbig2enc/src/.libs/libjbig2enc* /usr/local/lib/ \
+	&& cp ./jbig2enc/jbig2enc/src/jbig2 /usr/local/bin/ \
+	&& cp ./jbig2enc/jbig2enc/src/*.h /usr/local/include/
 
 WORKDIR /usr/src/paperless/src/
 
