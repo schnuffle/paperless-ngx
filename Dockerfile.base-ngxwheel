@@ -94,7 +94,7 @@ RUN python3 -m pip install --upgrade pip wheel \
 	  && python3 -m pip install $PIKEPDF_URL_ARMV7; \
 	fi \
 	&& if [ "$(uname -m)" = "aarch64" ]; \
-	then
+	then \
 	  python3 -m pip install $LXML_URL_ARM64 \
     && python3 -m pip install $PILLOW_URL_ARM64 \
 	  && python3 -m pip install $PIKEPDF_URL_ARM64; \
