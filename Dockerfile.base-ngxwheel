@@ -3,7 +3,7 @@ FROM python:3.9-slim-bullseye
 ARG DEBIAN_FRONTEND=noninteractive
 ARG PIKEPDF_URL_ARMV7="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.8/pikepdf-5.0.1-cp39-cp39-linux_armv7l.whl"
 ARG LXML_URL_ARMV7="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.8/lxml-4.8.0-cp39-cp39-linux_armv7l.whl"
-ARG PILLOW_URL_ARMV7="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.8Pillow-9.0.1-cp39-cp39-linux_armv7l.whl"
+ARG PILLOW_URL_ARMV7="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.8/Pillow-9.0.1-cp39-cp39-linux_armv7l.whl"
 ARG JBIG2ENC_URL_ARMV7="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.8/jbig2enc-armv7.tgz"
 
 ARG PIKEPDF_URL_ARM64="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.8/pikepdf-5.0.1-cp39-cp39-linux_aarch64.whl"
