@@ -40,7 +40,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile.base-ngxwheel
-          platforms: linux/arm/v7
+          platforms: linux/arm/v7,linux/arm64
           push: true
           tags: ${{ steps.prepare.outputs.tags }}
           cache-from: type=local,src=/tmp/.buildx-cache
