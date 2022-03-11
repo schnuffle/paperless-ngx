@@ -12,10 +12,13 @@ RUN ./configure && make
 FROM python:3.9-slim-bullseye
 
 ARG DEBIAN_FRONTEND=noninteractive
-ARG PIKEPDF_URL_ARMV7="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.1/pikepdf-5.0.1-cp39-cp39-linux_armv7l.whl"
-ARG LXML_URL_ARMV7="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.1/lxml-4.8.0-cp39-cp39-linux_armv7l.whl"
-ARG PILLOW_URL_ARMV7="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.1/Pillow-9.0.1-cp39-cp39-linux_armv7l.whl"
-ARG PIKEPDF_URL_ARM64="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.1/pikepdf-5.0.1-cp39-cp39-linux_aarch64.whl"
+ARG PIKEPDF_URL_ARMV7="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.2/pikepdf-5.0.1-cp39-cp39-linux_armv7l.whl"
+ARG LXML_URL_ARMV7="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.2/lxml-4.8.0-cp39-cp39-linux_armv7l.whl"
+ARG PILLOW_URL_ARMV7="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.2/Pillow-9.0.1-cp39-cp39-linux_armv7l.whl"
+
+ARG PIKEPDF_URL_ARM64="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.2/pikepdf-5.0.1-cp39-cp39-linux_aarch64.whl"
+ARG LXML_URL_ARM64="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.2/lxml-4.8.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.manylinux_2_24_aarch64.whl"
+ARG PILLOW_URL_ARM64="https://github.com/schnuffle/build-pikepdfwheel/releases/download/v1.1.2/Pillow-9.0.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
 ARG BUILD_PACKAGES="\
   automake \
   autotools-dev \
@@ -84,9 +87,18 @@ COPY requirements.txt ../
 
 # Python dependencies and library dependencies
 RUN python3 -m pip install --upgrade pip wheel \
-	&& python3 -m pip install $LXML_URL_ARMV7 \
-  && python3 -m pip install $PILLOW_URL_ARMV7 \
-	&& python3 -m pip install $PIKEPDF_URL_ARMV7 \
+  && if [ "$(uname -m)" = "armv7l" ]; \
+  then \
+	  python3 -m pip install $LXML_URL_ARMV7 \
+    && python3 -m pip install $PILLOW_URL_ARMV7 \
+	  && python3 -m pip install $PIKEPDF_URL_ARMV7; \
+	fi \
+	&& if [ "$(uname -m)" = "aarch64" ]; \
+	then
+	  python3 -m pip install $LXML_URL_ARM64 \
+    && python3 -m pip install $PILLOW_URL_ARM64 \
+	  && python3 -m pip install $PIKEPDF_URL_ARM64; \
+	fi \
   && python3 -m pip install --default-timeout=1000 --upgrade --no-cache-dir supervisor \
   && python3 -m pip install --default-timeout=1000 --no-cache-dir -r ../requirements.txt \
   && apt-get -y --autoremove purge $BUILD_PACKAGES \
