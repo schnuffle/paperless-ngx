@@ -5,7 +5,7 @@ on:
     branches:    
       - 'feature-split-dockerimage'  
     tags:
-      - ngx-project*
+      - 'ngx-project*'
 
 jobs:
   # build and push image to docker hub.
