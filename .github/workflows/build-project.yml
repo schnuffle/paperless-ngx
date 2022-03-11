@@ -1,12 +1,16 @@
 name: build-project
 
 on:
-  push:
-    branches:    
-      - 'feature-split-dockerimage'  
-    tags:
-      - 'ngx-project*'
-
+  workflow_dispatch:
+    # Inputs the workflow accepts.
+    inputs:
+      name:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Building and uploading pikepdf for armv7'
+        # Default value if no value is explicitly provided
+        default: 'beta'
+        # Input has to be provided for the workflow to run
+        required: true
 jobs:
   # build and push image to docker hub.
   build-project:
