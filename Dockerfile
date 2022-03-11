@@ -1,4 +1,4 @@
-FROM ghcr.io/schnuffle/paperless-ngx-base:latest
+FROM ghcr.io/schnuffle/paperless-ngx-basewheel:latest
 
 WORKDIR /usr/src/paperless/src/
 
@@ -20,7 +20,6 @@ RUN cd docker \
 COPY gunicorn.conf.py ../
 
 # copy app
-#COPY --from=compile-frontend /src/src/ ./
 COPY src-ui ./
 COPY src ./
 
@@ -37,4 +36,4 @@ ENTRYPOINT ["/sbin/docker-entrypoint.sh"]
 EXPOSE 8000
 CMD ["/usr/local/bin/supervisord", "-c", "/etc/supervisord.conf"]
 
-LABEL org.opencontainers.image.source=https://github.com/schnuffle/paperless-ngx
+LABEL org.opencontainers.image.source=ghcr.io/schnuffle/paperless-docker
