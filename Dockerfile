@@ -1,4 +1,4 @@
-FROM ghcr.io/schnuffle/paperless-ngx-basewheel:latest
+FROM ghcr.io/schnuffle/build-paperless-base-arm:latest
 
 WORKDIR /usr/src/paperless/src/
 
