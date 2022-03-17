@@ -24,7 +24,7 @@ COPY src-ui ./
 COPY src ./
 
 # Install supervisor
-RUN /usr/src/paperless/src/ \ 
+RUN cd /usr/src/paperless/src/ \ 
   && python3 -m pip install --default-timeout=1000 --upgrade --no-cache-dir supervisor \
   && python3 -m pip install --default-timeout=1000 --no-cache-dir -r ../requirements.txt
 
