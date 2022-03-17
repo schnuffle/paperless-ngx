@@ -6,7 +6,7 @@ on:
     inputs:
       name:
         # Friendly description to be shown in the UI instead of 'name'
-        description: 'Building and uploading pikepdf for armv7/64'
+        description: 'Building and uploading paperless imagefor amd64/armv7/64'
         # Default value if no value is explicitly provided
         default: 'beta'
         # Input has to be provided for the workflow to run
@@ -47,7 +47,7 @@ jobs:
         run: cd src-ui && npm install 
       - 
         name: angular build 
-        run:  cd src-ui && ./node_modules/.bin/ng build --configuration production
+        run:  ./node_modules/.bin/ng build --configuration production
       - 
         name: Login to Github Container Registry
         uses: docker/login-action@v1
