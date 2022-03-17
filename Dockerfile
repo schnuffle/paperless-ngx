@@ -18,6 +18,7 @@ RUN cd docker \
 	&& rm docker -rf
 
 COPY gunicorn.conf.py ../
+COPY requirements.txt ../
 
 # copy app
 COPY src-ui ./
