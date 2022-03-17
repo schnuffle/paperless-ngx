@@ -1,4 +1,4 @@
-name: build-project
+name: build-project-all-platforms
 
 on:
   workflow_dispatch:
