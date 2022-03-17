@@ -47,7 +47,7 @@ jobs:
         run: cd src-ui && npm install 
       - 
         name: angular build 
-        run:  ./node_modules/.bin/ng build --configuration production
+        run:  cd src-ui && ./node_modules/.bin/ng build --configuration production
       - 
         name: Login to Github Container Registry
         uses: docker/login-action@v1
