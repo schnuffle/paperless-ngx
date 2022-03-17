@@ -6,7 +6,7 @@ WORKDIR /usr/src/paperless/src/
 COPY docker/ ./docker/
 
 RUN cd docker \
-  	&& cp imagemagick-policy.xml /etc/ImageMagick-6/policy.xml \
+  && cp imagemagick-policy.xml /etc/ImageMagick-6/policy.xml \
 	&& mkdir /var/log/supervisord /var/run/supervisord \
 	&& cp supervisord.conf /etc/supervisord.conf \
 	&& cp docker-entrypoint.sh /sbin/docker-entrypoint.sh \
@@ -23,6 +23,10 @@ COPY gunicorn.conf.py ../
 COPY src-ui ./
 COPY src ./
 
+# Install supervisor
+RUN /usr/src/paperless/src/ \ 
+  && python3 -m pip install --default-timeout=1000 --upgrade --no-cache-dir supervisor \
+  && python3 -m pip install --default-timeout=1000 --no-cache-dir -r ../requirements.txt
 
 # add users, setup scripts
 RUN addgroup --gid 1000 paperless \
