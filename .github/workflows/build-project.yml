@@ -24,7 +24,7 @@ jobs:
         name: Prepare Docker
         id: prepare
         run: |
-          IMAGE_NAME=ghcr.io/schnuffle/paperless-docker
+          IMAGE_NAME=ghcr.io/paperless-ngx/paperless-docker
           TAGS=${IMAGE_NAME}:latest
           INSPECT_TAG=${IMAGE_NAME}:latest
           echo ::set-output name=tags::${TAGS}
