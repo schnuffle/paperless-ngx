@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - ngx-*
+      - beta-*
     branches-ignore:
       - 'translations**'
   pull_request:
@@ -18,31 +19,24 @@ jobs:
         name: Checkout
         uses: actions/checkout@v2
       -
+        name: Install pipenv
+        run: pipx install pipenv
+      -
         name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
-      -
-        name: Get pip cache dir
-        id: pip-cache
-        run: |
-          echo "::set-output name=dir::$(pip cache dir)"
-      -
-        name: Persistent Github pip cache
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.pip-cache.outputs.dir }}
-          key: ${{ runner.os }}-pip3.8}
+          cache: "pipenv"
+          cache-dependency-path: 'Pipfile.lock'
       -
         name: Install dependencies
         run: |
-          pip install --upgrade pipenv
-          pipenv install --system --dev --ignore-pipfile
+          pipenv sync --dev
       -
         name: Make documentation
         run: |
           cd docs/
-          make html
+          pipenv run make html
       -
         name: Upload artifact
         uses: actions/upload-artifact@v2
@@ -50,52 +44,68 @@ jobs:
           name: documentation
           path: docs/_build/html/
 
-  codestyle:
+  backend-code-checks:
+    name: "Backend Code Checks"
     runs-on: ubuntu-20.04
     steps:
       -
         name: Checkout
         uses: actions/checkout@v2
       -
-        name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-      -
-        name: Get pip cache dir
-        id: pip-cache
+        name: Install checkers
         run: |
-          echo "::set-output name=dir::$(pip cache dir)"
+          pipx install reorder-python-imports
+          pipx install yesqa
+          pipx install add-trailing-comma
+          pipx install flake8
       -
-        name: Persistent Github pip cache
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.pip-cache.outputs.dir }}
-          key: ${{ runner.os }}-pip${{ matrix.python-version }}
-      -
-        name: Install dependencies
+        name: Run reorder-python-imports
         run: |
-          pip install --upgrade pipenv
-          pipenv install --system --dev --ignore-pipfile
+          find src/ -type f -name '*.py' ! -path "*/migrations/*" | xargs reorder-python-imports
       -
-        name: Codestyle
+        name: Run yesqa
         run: |
-          cd src/
-          pycodestyle --max-line-length=88 --ignore=E121,E123,E126,E226,E24,E704,W503,W504,E203
-  codeformatting:
-    runs-on: ubuntu-20.04
-    steps:
+          find src/ -type f -name '*.py' ! -path "*/migrations/*" | xargs yesqa
       -
-        name: Checkout
-        uses: actions/checkout@v2
+        name: Run add-trailing-comma
+        run: |
+          find src/ -type f -name '*.py' ! -path "*/migrations/*" | xargs add-trailing-comma
+      # black is placed after add-trailing-comma because it may format differently
+      # if a trailing comma is added
       -
         name: Run black
         uses: psf/black@stable
         with:
           options: "--check --diff"
           version: "22.1.0"
+      -
+        name: Run flake8 checks
+        run: |
+          cd src/
+          flake8 --max-line-length=88 --ignore=E203,W503
 
-  tests:
+  frontend-code-checks:
+    name: "Frontend Code Checks"
+    runs-on: ubuntu-20.04
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      -
+        name: Install prettier
+        run: |
+          npm install prettier
+      -
+        name: Run prettier
+        run:
+          npx prettier --check --ignore-path Pipfile.lock **/*.js **/*.ts *.md **/*.md
+
+  backend-tests:
+    needs: [backend-code-checks]
+    name: "Backend Tests (${{ matrix.python-version }})"
     runs-on: ubuntu-20.04
     strategy:
       matrix:
@@ -106,33 +116,29 @@ jobs:
         name: Checkout
         uses: actions/checkout@v2
       -
+        name: Install pipenv
+        run: pipx install pipenv
+      -
         name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: "${{ matrix.python-version }}"
+          cache: "pipenv"
+          cache-dependency-path: 'Pipfile.lock'
       -
-        name: Get pip cache dir
-        id: pip-cache
-        run: |
-          echo "::set-output name=dir::$(pip cache dir)"
-      -
-        name: Persistent Github pip cache
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.pip-cache.outputs.dir }}
-          key: ${{ runner.os }}-pip${{ matrix.python-version }}
-      -
-        name: Install dependencies
+        name: Install system dependencies
         run: |
           sudo apt-get update -qq
           sudo apt-get install -qq --no-install-recommends unpaper tesseract-ocr imagemagick ghostscript optipng
-          pip install --upgrade pipenv
-          pipenv install --system --dev --ignore-pipfile
+      -
+        name: Install Python dependencies
+        run: |
+          pipenv sync --dev
       -
         name: Tests
         run: |
           cd src/
-          pytest
+          pipenv run pytest
       -
         name: Publish coverage results
         if: matrix.python-version == '3.9'
@@ -141,10 +147,78 @@ jobs:
         # https://github.com/coveralls-clients/coveralls-python/issues/251
         run: |
           cd src/
-          coveralls --service=github
+          pipenv run coveralls --service=github
+
+  # build and push image to docker hub.
+  build-docker-image:
+    if: github.event_name == 'push' && (startsWith(github.ref, 'refs/heads/feature-') || github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/beta' || startsWith(github.ref, 'refs/tags/ngx-') || startsWith(github.ref, 'refs/tags/beta-'))
+    runs-on: ubuntu-latest
+    needs: [backend-tests, frontend-code-checks]
+    steps:
+      -
+        name: Prepare
+        id: prepare
+        run: |
+          IMAGE_NAME=ghcr.io/${{ github.repository }}
+          if [[ $GITHUB_REF == refs/tags/ngx-* ]]; then
+            TAGS=${IMAGE_NAME}:${GITHUB_REF#refs/tags/ngx-},${IMAGE_NAME}:latest
+            INSPECT_TAG=${IMAGE_NAME}:latest
+          elif [[ $GITHUB_REF == refs/tags/beta-* ]]; then
+            TAGS=${IMAGE_NAME}:beta
+            INSPECT_TAG=${TAGS}
+          elif [[ $GITHUB_REF == refs/heads/* ]]; then
+            TAGS=${IMAGE_NAME}:${GITHUB_REF#refs/heads/}
+            INSPECT_TAG=${TAGS}
+          else
+            exit 1
+          fi
+          echo ::set-output name=tags::${TAGS}
+          echo ::set-output name=inspect_tag::${INSPECT_TAG}
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      -
+        name: Login to Github Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm/v7,linux/arm64
+          push: true
+          tags: ${{ steps.prepare.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      -
+        name: Inspect image
+        run: |
+          docker buildx imagetools inspect ${{ steps.prepare.outputs.inspect_tag }}
+      -
+        name: Export frontend artifact from docker
+        run: |
+          docker run -d --name frontend-extract ${{ steps.prepare.outputs.inspect_tag }}
+          docker cp frontend-extract:/usr/src/paperless/src/documents/static/frontend src/documents/static/frontend/
+      -
+        name: Upload frontend artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: frontend-compiled
+          path: src/documents/static/frontend/
 
   build-release:
-    needs: [build-docker-image, documentation, tests, codeformatting, codestyle]
+    needs: [build-docker-image, documentation, backend-tests, backend-code-checks, frontend-code-checks]
     runs-on: ubuntu-20.04
     steps:
       -
@@ -213,7 +287,7 @@ jobs:
   publish-release:
     runs-on: ubuntu-latest
     needs: build-release
-    if: contains(github.ref, 'refs/tags/ngx-')
+    if: contains(github.ref, 'refs/tags/ngx-') || contains(github.ref, 'refs/tags/beta-')
     steps:
       -
         name: Download release artifact
@@ -225,7 +299,15 @@ jobs:
         name: Get version
         id: get_version
         run: |
-          echo ::set-output name=version::${GITHUB_REF#refs/tags/ngx-}
+          if [[ $GITHUB_REF == refs/tags/ngx-* ]]; then
+            echo ::set-output name=version::${GITHUB_REF#refs/tags/ngx-}
+            echo ::set-output name=prerelease::false
+            echo ::set-output name=body::"For a complete list of changes, see the changelog at https://paperless-ngx.readthedocs.io/en/latest/changelog.html"
+          elif [[ $GITHUB_REF == refs/tags/beta-* ]]; then
+            echo ::set-output name=version::${GITHUB_REF#refs/tags/beta-}
+            echo ::set-output name=prerelease::true
+            echo ::set-output name=body::"For a complete list of changes, see the changelog at https://github.com/paperless-ngx/paperless-ngx/blob/beta/docs/changelog.rst"
+          fi
       -
         name: Create release
         id: create_release
@@ -236,9 +318,8 @@ jobs:
           tag_name: ngx-${{ steps.get_version.outputs.version }}
           release_name: Paperless-ngx ${{ steps.get_version.outputs.version }}
           draft: false
-          prerelease: false
-          body: |
-            For a complete list of changes, see the changelog at https://paperless-ngx.readthedocs.io/en/latest/changelog.html.
+          prerelease: ${{ steps.get_version.outputs.prerelease }}
+          body: ${{ steps.get_version.outputs.body }}
       -
         name: Upload release archive
         id: upload-release-asset
@@ -250,68 +331,3 @@ jobs:
           asset_path: ./paperless-ngx.tar.xz
           asset_name: paperless-ngx-${{ steps.get_version.outputs.version }}.tar.xz
           asset_content_type: application/x-xz
-
-  # build and push image to docker hub.
-  build-docker-image:
-    if: github.event_name == 'push' && (startsWith(github.ref, 'refs/heads/feature-') || github.ref == 'refs/heads/dev' || startsWith(github.ref, 'refs/tags/ngx-'))
-    runs-on: ubuntu-latest
-    needs: [tests, codeformatting, codestyle]
-    steps:
-      -
-        name: Prepare
-        id: prepare
-        run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository }}
-          if [[ $GITHUB_REF == refs/tags/ngx-* ]]; then
-            TAGS=${IMAGE_NAME}:${GITHUB_REF#refs/tags/ngx-},${IMAGE_NAME}:latest
-            INSPECT_TAG=${IMAGE_NAME}:latest
-          elif [[ $GITHUB_REF == refs/heads/* ]]; then
-            TAGS=${IMAGE_NAME}:${GITHUB_REF#refs/heads/}
-            INSPECT_TAG=${TAGS}
-          else
-            exit 1
-          fi
-          echo ::set-output name=tags::${TAGS}
-          echo ::set-output name=inspect_tag::${INSPECT_TAG}
-      -
-        name: Checkout
-        uses: actions/checkout@v2
-      -
-        name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      -
-        name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      -
-        name: Login to Github Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      -
-        name: Build and push
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: ./Dockerfile
-          platforms: linux/amd64,linux/arm/v7,linux/arm64
-          push: true
-          tags: ${{ steps.prepare.outputs.tags }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-      -
-        name: Inspect image
-        run: |
-          docker buildx imagetools inspect ${{ steps.prepare.outputs.inspect_tag }}
-      -
-        name: Export frontend artifact from docker
-        run: |
-          docker run -d --name frontend-extract ${{ steps.prepare.outputs.tags }}
-          docker cp frontend-extract:/usr/src/paperless/src/documents/static/frontend src/documents/static/frontend/
-      -
-        name: Upload frontend artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: frontend-compiled
-          path: src/documents/static/frontend/
