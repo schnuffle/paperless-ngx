@@ -189,24 +189,41 @@ jobs:
     needs: [tests-backend, tests-frontend]
     steps:
       -
+        name: Get branch name
+        id: branch-name
+        uses: tj-actions/branch-names@v5.2
+      -
         name: Prepare
         id: prepare
         run: |
           IMAGE_NAME=ghcr.io/${{ github.repository }}
-          if [[ $GITHUB_REF == refs/tags/ngx-* ]]; then
+          if [[ $steps.branch-name.outputs.is_tag == "true" && $steps.branch-name.outputs.current_branch == "ngx-*" ]]; then
             TAGS=${IMAGE_NAME}:${GITHUB_REF#refs/tags/ngx-},${IMAGE_NAME}:latest
             INSPECT_TAG=${IMAGE_NAME}:latest
-          elif [[ $GITHUB_REF == refs/tags/beta-* ]]; then
+          if [[ $steps.branch-name.outputs.is_tag == "true" && $steps.branch-name.outputs.current_branch == "beta-*" ]]; then
             TAGS=${IMAGE_NAME}:beta
             INSPECT_TAG=${TAGS}
-          elif [[ $GITHUB_REF == refs/heads/* ]]; then
-            TAGS=${IMAGE_NAME}:${GITHUB_REF#refs/heads/}
-            INSPECT_TAG=${TAGS}
           else
-            exit 1
+            TAGS=${IMAGE_NAME}:${{ steps.branch-name.outputs.current_branch }}
+            INSPECT_TAG=${TAGS}
           fi
           echo ::set-output name=tags::${TAGS}
           echo ::set-output name=inspect_tag::${INSPECT_TAG}
+      -
+        name: Determine paperless-ngx base image version
+        id: base-image-version
+        run: |
+          BUILDER_REPO=ghcr.io/paperless-ngx/builder
+          if git ls-remote --exit-code https://github.com/paperless-ngx/builder $steps.branch-name.outputs.current_branch; then
+            BASE_IMAGE=${BUILDER_REPO}:${{ steps.branch-name.outputs.current_branch }}
+          else
+            BASE_IMAGE=${BUILDER_REPO}:main
+          fi
+
+          echo "Using paperless-ngx base image: ${BASE_IMAGE}"
+
+          echo ::set-output name=paperless-base-image::${BASE_IMAGE}
+
       -
         name: Checkout
         uses: actions/checkout@v2
@@ -231,6 +248,8 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm/v7,linux/arm64
           push: true
+          build-args: |
+            BASE_IMAGE=${{ steps.base-image-version.outputs.paperless-base-image }}
           tags: ${{ steps.prepare.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -241,7 +260,7 @@ jobs:
       -
         name: Export frontend artifact from docker
         run: |
-          docker run -d --name frontend-extract ${{ steps.prepare.outputs.inspect_tag }}
+          docker create --name frontend-extract ${{ steps.prepare.outputs.inspect_tag }}
           docker cp frontend-extract:/usr/src/paperless/src/documents/static/frontend src/documents/static/frontend/
       -
         name: Upload frontend artifact
