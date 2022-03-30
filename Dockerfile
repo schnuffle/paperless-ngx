@@ -6,7 +6,7 @@ WORKDIR /src/src-ui
 RUN npm update npm -g && npm ci --no-optional
 RUN ./node_modules/.bin/ng build --configuration production
 
-FROM ghcr.io/paperless-ngx/ngx-builder:1.0 as main-app
+FROM ghcr.io/paperless-ngx/builder/ngx-base:1.0 as main-app
 
 LABEL org.opencontainers.image.authors="paperless-ngx team <hello@paperless-ngx.com>"
 LABEL org.opencontainers.image.documentation="https://paperless-ngx.readthedocs.io/en/latest/"
@@ -38,8 +38,9 @@ RUN cd docker \
   && mkdir /var/log/supervisord /var/run/supervisord \
   && cp supervisord.conf /etc/supervisord.conf \
   && cp docker-entrypoint.sh /sbin/docker-entrypoint.sh \
-  && cp docker-prepare.sh /sbin/docker-prepare.sh \
   && chmod 755 /sbin/docker-entrypoint.sh \
+  && cp docker-prepare.sh /sbin/docker-prepare.sh \
+  && chmod 755 /sbin/docker-prepare.sh \
   && chmod +x install_management_commands.sh \
   && ./install_management_commands.sh \
   && cd .. \
